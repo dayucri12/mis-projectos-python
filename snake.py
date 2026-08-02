@@ -1,6 +1,7 @@
 import pygame
 import random
 import sys
+import json
 
 pygame.init()
 
@@ -107,6 +108,22 @@ def colision_cuerpo(serpiente):
 
 def colision_comida(serpiente, comida):
     return serpiente.cuerpo[0] == comida.posicion
+
+
+ARCHIVO_RECORD = "record_snake.json"
+
+def cargar_record():
+    try:
+        with open(ARCHIVO_RECORD, "r", encoding="utf-8") as archivo:
+            datos = json.load(archivo)
+            return datos.get("record", 0)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return 0
+
+def guardar_record(nuevo_record):
+    datos = {"record": nuevo_record}
+    with open(ARCHIVO_RECORD, "w", encoding="utf-8") as archivo:
+        json.dump(datos, archivo, ensure_ascii=False, indent=2)
     
 
 
@@ -119,6 +136,7 @@ def reiniciar_juego():
 
 
 def bucle_principal():
+    record = cargar_record()
     serpiente, comida, puntuacion, velocidad_actual, contador_comidas = reiniciar_juego()
     en_juego = True
     game_over = False
@@ -155,6 +173,9 @@ def bucle_principal():
 
             if colision_paredes(serpiente) or colision_cuerpo(serpiente):
                 game_over = True
+                if puntuacion > record:
+                    record = puntuacion
+                    guardar_record(record)
 
             if colision_comida(serpiente, comida):
                 serpiente.crecer = True
@@ -178,6 +199,7 @@ def bucle_principal():
         comida.dibujar()
 
         dibujar_texto(f"Puntos: {puntuacion}", NARANJA, 10, 10, fuente_peque)
+        dibujar_texto(f"Récord: {record}", ROJO, ANCHO_VENTANA // 2 - 50, 10, fuente_peque)
         dibujar_texto(f"Velocidad: {velocidad_actual}", NARANJA, ANCHO_VENTANA - 180, 10, fuente_peque)
 
         if game_over:
