@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# Archivos de datos (si quieres mantener datos privados)
+# *.json
+# contactos.json
+# record.json
