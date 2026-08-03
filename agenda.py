@@ -56,6 +56,8 @@ def buscar_contacto(contactos):
         nombre: datos
         for nombre, datos in contactos.items()
         if busqueda in nombre
+        or busqueda in datos.get("telefono", "").lower()
+        or busqueda in datos.get("email", "").lower()
     }
     if not encontrados:
         print(f"🔍 No se encontró ningún contacto con '{busqueda}'.")
@@ -111,8 +113,8 @@ def mostrar_menu():
     print("  2. Ver todos los contactos")
     print("  3. Buscar contacto")
     print("  4. Borrar contacto")
-    print("  6. Editar contacto")
-    print("  5. Salir")
+    print("  5. Editar contacto")
+    print("  6. Salir")
     print("=" * 50)
 
 
@@ -132,9 +134,9 @@ def main():
             buscar_contacto(contactos)
         elif opcion == "4":
             borrar_contacto(contactos)
-        elif opcion == "6":
-            editar_contacto(contactos)
         elif opcion == "5":
+            editar_contacto(contactos)
+        elif opcion == "6":
             guardar_contactos(contactos)
             print("\n👋 ¡Hasta pronto! Contactos guardados.\n")
             break
