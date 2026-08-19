@@ -324,6 +324,7 @@ def pedir_id_valido(gestor) -> int | None:
         
 def main():
     gestor = GestorGastos()
+    print("💰 Bienvenido al Gestor de Gastos Perse")
     while True:   # ← BUCLE QUE REPITE EL MENÚ (NO TE LO OLVIDES!!)
         print("\n" * 20)
         opcion = mostrar_menu()
