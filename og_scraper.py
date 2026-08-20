@@ -12,7 +12,7 @@ class OGParser(html.parser.HTMLParser):
         self.title_fallback = ""
         
     def handle_starttag(self, tag, attrs: list[tuple]):
-        d = dict(attrs)
+        dict(attrs)
         if tag == "meta":
             atributos = dict(attrs)
             if "property"  in atributos: 
