@@ -13,7 +13,7 @@ class Gasto:
             self.fecha = datetime.now().strftime("%Y-%m-%d")
         else:
             self.fecha = fecha
-            self.pagado = pagado
+        self.pagado = pagado
     def __str__(self):
         estado = "👍 pagado" if self.pagado else "⏳ pendiente"
         emojis = {"comida": "🍔","transporte":"🚗","ocio":"🎮","alquiler":"🏠",
@@ -144,7 +144,7 @@ class GestorGastos:
         sql = f"""
                 SELECT id, concepto, categoria, importe, fecha, pagado
                 FROM gastos
-                WHERE strftime('%y', fecha) = ?
+                WHERE strftime('%Y', fecha) = ? 
                 AND strftime('%m', fecha) = ?
                 ORDER BY fecha ASC
                 """
@@ -167,13 +167,15 @@ class GestorGastos:
         
         gastos = [self._fila_a_gasto(fila) for fila in filas]
     
-        print(f"💸 TOTAL {nombre_mes} de {anio}: {total:.2f} €")
+        
         
         divisor = ("-" * 110)
         for g in gastos:
             print(g)
         print(divisor)
         total = sum(g.importe for g in gastos if g.pagado)
+        total_gen = sum(g.importe for g in gastos)
+        print(f"💸 TOTAL {nombre_mes} de {anio}: {total_gen:.2f} €")
         print(f"✅ Gastos pagados: {total:.2f} €")
         return gastos
         
@@ -231,8 +233,14 @@ class GestorGastos:
     # -----------------------------------------------------------------
 
     def editar_importe(self, id_gasto: int, nuevo_importe: float) -> bool:
-        # ✅ PASO 1 (TU): Valida que nuevo_importe > 0. Si no → error return False
-        # TODO: aquí tu código
+        try:
+            nuevo_importe = float(nuevo_importe)
+            if nuevo_importe <=0:
+                print("❌ El importe debe ser mayor que 0")
+                return False
+        except (ValueError, TypeError):
+            print("❌ El importe debe ser un número positivo (ej: 25.90)")
+            return False
        
 
         # ✅ PASO 2 (YA HECHO): SQL UPDATE
@@ -274,13 +282,7 @@ class GestorGastos:
         else:
             print(f"🗑️ Gasto borrado")
             return True
-    def _buscar_por_id(self, id_gasto: int) -> Gasto | None:
-        sql = "SELECT id, concepto, categoria, importe,fecha, pagado FROM gastos WHERE id = ?"
-        self.cursor.execute(sql, (id_gasto,))
-        fila = self.cursor.fetchone()
-        if fila is None:
-            return None
-        return self._fila_a_gasto(fila)
+    
     
 def mostrar_menu() -> str:
     
@@ -427,7 +429,7 @@ def main():
             if id_gasto is None:
                 continue
             gestor.borrar_gasto(id_gasto)
-            print("\nPulsa INTRO para continuar...")
+            input("\nPulsa INTRO para continuar...")
             
         elif opcion == "0":
             gestor.cerrar()   # IMPRESCINDIBLE
